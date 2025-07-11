@@ -1,0 +1,72 @@
+
+# Define a versão do Docker Compose a ser usada. A versão 3.8 é moderna e amplamente compatível, mas não é necessario
+#mais hoje em dia, por isso está comentada.
+# version: '3.8'
+
+# Define os serviços (contêineres) que compõem a sua aplicação.
+services:
+  # Nome do nosso serviço principal, pode ser qualquer nome (ex: api, app, web, etc.).
+  app:
+    # Define um nome amigável para o contêiner, facilitando a sua identificação.
+    container_name: api
+
+    # Instrução para construir a imagem Docker.
+    # O "." indica que o Docker Compose deve procurar o Dockerfile no diretório atual.
+    build: .
+
+    # Mapeia as portas.
+    # Mapeia a porta 8000 do seu computador (host) para a porta 8000 do contêiner.
+    # Isso permite que você acesse a API em http://localhost:8000.
+    ports:
+      - "8000:8000"
+
+    # Define os volumes para sincronização de arquivos e persistência de dados.
+    # O "." no lado do host é o diretório atual do projeto.
+    # O "/app" é o WORKDIR definido no seu Dockerfile.
+    volumes:
+      - .:/app
+
+# (Opcional) Define um volume nomeado para o banco de dados, caso você queira separá-lo
+# dos arquivos de código. Para SQLite, o mapeamento acima já resolve a persistência.
+# volumes:
+#   database_data:
+
+
+
+# Versão final melhorada abaixo
+
+# services:
+#   app:
+#     build: .
+#     container_name: api
+#     ports:
+#       - "8000:8000"
+#     volumes:
+#       - .:/app
+
+
+#   Análise da Versão Final
+# Esta configuração é ideal para o ambiente de desenvolvimento do seu projeto FastAPI. Veja por quê:
+# services: app:: Define um serviço chamado app. É um nome claro e comum para o serviço principal da
+# aplicação.
+# build: .: Instrui o Docker Compose a construir a imagem Docker usando o Dockerfile que está no mesmo
+# diretório. Perfeito.
+# container_name: api: Dá um nome fixo e amigável (api) ao contêiner quando ele for executado. Isso
+# facilita a identificação e o gerenciamento (ex: docker stop api).
+# ports: - "8000:8000": Mapeia a porta 8000 do seu computador (host) para a porta 8000 do contêiner. É
+#   exatamente o que você precisa para acessar a API em http://localhost:8000.
+# volumes: - .:/app: Esta Live Reload: Ele sincroniza a pasta do seu projeto no seu computador (.) com a
+#   pasta /app dentro do contêiner. Como seu Dockerfile usa o comando uvicorn com a flag --reload, qualquer
+#   alteração que você salvar nos seus arquivos .py será detectada e o servidor reiniciará automaticamente.
+# Persistência do Banco de Dados: Como seu projeto usa SQLite (escola.db), este volume garante que o arquivo
+#   do banco de dados seja criado e salvo na pasta do seu projeto no seu computador, e não apenas dentro do
+#   contêiner. Se você parar e remover o contêiner, seus dados não serão perdidos.
+#   Conclusão
+#   Sim, essa versão está perfeita. É a maneira padrão e recomendada de configurar um ambiente de
+#   desenvolvimento para uma aplicação como a sua usando Docker Compose.
+# Para executar, basta salvar este conteúdo no arquivo docker-compose.yml na raiz do projeto e rodar
+# o comando:
+
+# docker-compose up --build
+
+# O Docker irá construir a imagem (se for a primeira vez ou se o Dockerfile mudou) e iniciar o seu contêiner.
